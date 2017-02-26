@@ -1,0 +1,18 @@
+{ "startServiceType":"StartProcess",
+"endServiceType":"EndProcess",
+"constraints":[
+{ "type":"RequiredNode",
+"target":"Quotation Handling"},
+{ "type":"RequiredNode",
+"target":"Approve Order"},
+{ "type":"RequiredNode",
+"target":"Order  Handling"},
+{ "type":"RequiredNode",
+"target":"Shipping Handling"},
+{ "type":"RequiredNode",
+"target":"Review Order"},
+{ "type":"RequiredNode",
+"target":"Approve Customer"},
+{ "type":"RequiredNode",
+"target":"Approve Product"},
+]};
