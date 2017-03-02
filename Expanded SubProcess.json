@@ -9,14 +9,11 @@
 	  "target":"Order  Handling"},
 	  "constraint":"Review Order"},
 	{ "type":"BeforeNode",
-	  "target":"Approve Product"},
+	  "target":"Approver Order"},
 	  "constraint":"Order  Handling"},
 	{ "type":"BeforeNode",
-	  "target":"Approve Product"},
+	  "target":"Approver Order"},
 	  "constraint":"Shipping Handling"},
 	{ "type":"BeforeNode",
-	  "target":"Approve Customer"},
-	  "constraint":"Approve Product"},
-	{ "type":"BeforeNode",
 	  "target":"Quotation Handling"},
-	  "constraint":"Approve Customer"}]};
+	  "constraint":"Approver Order"}]};

@@ -35,7 +35,7 @@ import org.camunda.bpm.model.xml.type.ModelElementType;
 public class MicroFlow {
 	static int nullcounter = 0;
 	public static void main(String[] args) {
-  		File file = new File("../MicroFlowTransform/microFlow/Data/CallActivity.bpmn");
+  		File file = new File("../MicroFlowTransform/microFlow/Data/Pool.bpmn");
   		createCollectionFromBpmn(file);
 	}
 	
@@ -53,22 +53,10 @@ public class MicroFlow {
 		Collection<SequenceFlow> sequenceFlowInstance = endEvent[0].getParentElement().getChildElementsByType(SequenceFlow.class);
 		SequenceFlow [] sequenceFlowArray = sequenceFlowInstance.toArray(new SequenceFlow[0]);
 		
-		ModelElementType callActivityInit = modelInstance.getModel().getType(CallActivity.class);
-		Collection<ModelElementInstance> callActivityInstance = modelInstance.getModelElementsByType(callActivityInit);
-		CallActivity [] callActivity = callActivityInstance.toArray(new CallActivity[0]);
-		
-		//System.out.println(callActivity[0].getAttributeValue("calledElement").toString());
 		String [][] result = createStringArray(sequenceFlowArray, modelInstance);
 		
 		jsonString = createStartString(sequenceFlowArray, endEvent);
-		
-		for(int i = 0; i < nullcounter - 1; i++){
-			jsonString += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
-					"\t  \"target\":\"" + result[i][0] + "\"}," + System.lineSeparator() +
-					"\t  \"constraint\":\"" + result[i + 1][0] + "\"}," + System.lineSeparator();
-			//System.out.println(sequenceFlowArray[i].getTarget().getName());			
-		}
-		jsonString += "]};";
+		jsonString += createConstraints(result);
 		System.out.println(jsonString);
 		
 		writeToFile(jsonString, filename);
@@ -77,30 +65,33 @@ public class MicroFlow {
 	
 	//Creates the StartString for the JSON-File
 	//
-	//TODO Wenn mehrere EndEvents eintreffen können alle vorknoten als endServiceType reinschreiben
-	//realisierung durch das durchgehen aller vorknoten des EndEvent-Arrays und String Verkettung
+	// Wenn mehrere EndEvents eintreffen können alle vorknoten als endServiceType reinschreiben
+	// realisierung durch das durchgehen aller vorknoten des EndEvent-Arrays und String Verkettung
 	public static String createStartString(SequenceFlow [] sequenceFlowArray, EndEvent [] endEvent){
 		String startString = null;
 		
-		startString = "{ \"startServiceType\":\""+sequenceFlowArray[0].getSource().getId()+"\"," + System.lineSeparator();
-		
-		for(int i = 0; i < endEvent.length; i++){
-			if(endEvent[i].getName() == null){
-				startString += "\"endServiceType\":\"" + endEvent[i].getId() + "\"," + System.lineSeparator();
-			} else {
-				startString += "\"endServiceType\":\"" + endEvent[i].getName() + "\"," + System.lineSeparator();
-			}
+		if(sequenceFlowArray[0].getSource().getName() == null){
+			startString = "{ \"startServiceType\":\""+sequenceFlowArray[0].getSource().getId()+"\"," + System.lineSeparator();
+		} else {
+			startString = "{ \"startServiceType\":\""+sequenceFlowArray[0].getSource().getName()+"\"," + System.lineSeparator();
 		}
 		
+		Collection<EndEvent> constraintEnd = endEvent[0].getParentElement().getChildElementsByType(EndEvent.class);
+		EndEvent [] constraintEndArray = constraintEnd.toArray(new EndEvent[0]);
+		for(int i = 0; i < constraintEndArray.length; i++){
+			if(constraintEndArray[i].getName() == null){
+				startString += "\"endServiceType\":\"" + constraintEndArray[i].getId() + "\"," + System.lineSeparator();
+			} else {
+				startString += "\"endServiceType\":\"" + constraintEndArray[i].getName() + "\"," + System.lineSeparator();
+			}
+		}
 		startString += "\"constraints\":[" + System.lineSeparator();
-		//System.out.println(startString + " Start String");
 		return startString;
 	}
 
 	public static String[][] createStringArray(SequenceFlow[] sequenceFlowArray, BpmnModelInstance modelInstance){
 		String [][] temp = new String [100][2];
 		String [][] result = new String [100][2];
-		FlowNode [] flow = new FlowNode[50];
 		int count = 0;
 		for(int i = sequenceFlowArray.length - 1; i >= 0; i--){
 			if(sequenceFlowArray[i].getTarget().getElementType().getTypeName() != "callActivity"){
@@ -122,16 +113,42 @@ public class MicroFlow {
 			}
 		}
 		for(int i = 0; i < count; i++){
-			//System.out.println(temp[i][0] + " ||| " + temp[i][1]);
 			if(temp[i][0] != null){
-				result[nullcounter++][0] = temp[i][0];
-				result[nullcounter][1] = temp[i][1];
+				result[nullcounter][0] = temp[i][0];
+				result[nullcounter++][1] = temp[i][1];
 			}
 		}
-		for(int i = 0; i < nullcounter; i++){
-			//System.out.println(result[i][0]);	
-		}
 		return result;
+		
+	}
+	
+	public static String createConstraints(String [][] stringArray){
+		String constraints = "";
+		
+		for(int i = 0; i < nullcounter - 1; i++){
+			//System.out.println(stringArray[i][0]+ "|||" +stringArray[i][1]);
+			if(stringArray[i][1] == "p" && stringArray[i + 1][1] == null){
+				for(int j = 0; j < 2; j++){
+					constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
+							"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
+							"\t  \"constraint\":\"" + stringArray[i - j][0] + "\"}," + System.lineSeparator();
+				}
+				
+			} else if(stringArray[i][1] == "p" && stringArray[i - 1][1] == null) {
+				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
+						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
+						"\t  \"constraint\":\"" + stringArray[i - 1][0] + "\"}," + System.lineSeparator();
+				
+			} else {
+				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
+						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
+						"\t  \"constraint\":\"" + stringArray[i][0] + "\"},"+ System.lineSeparator();
+			}
+		}
+		// Delete the last comma in the String
+		constraints = constraints.substring(0, constraints.length() - 3);
+		constraints += "]};";
+		return constraints;
 		
 	}
 	

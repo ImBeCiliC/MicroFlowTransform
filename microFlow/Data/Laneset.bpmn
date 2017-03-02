@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
-<semantic:definitions id="_1275486223307" targetNamespace="http://www.trisotech.com/definitions/_1275486223307" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL">
-    <semantic:process isExecutable="false" id="_6">
+<semantic:definitions id="_1275486169167" targetNamespace="http://www.trisotech.com/definitions/_1275486169167" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL">
+    <semantic:process isExecutable="false" id="_6-1">
+        <semantic:laneSet id="ls_1275486169372">
+            <semantic:lane name="Buyer" id="Buyer">
+                <semantic:flowNodeRef>StartProcess</semantic:flowNodeRef>
+                <semantic:flowNodeRef>TaskQuotationHandling</semantic:flowNodeRef>
+                <semantic:flowNodeRef>GatewayOrderApprovedDecision</semantic:flowNodeRef>
+                <semantic:flowNodeRef>_6-190</semantic:flowNodeRef>
+                <semantic:flowNodeRef>_6-241</semantic:flowNodeRef>
+                <semantic:flowNodeRef>TaskReviewOrder</semantic:flowNodeRef>
+                <semantic:flowNodeRef>EndProcess</semantic:flowNodeRef>
+                <semantic:flowNodeRef>ParaSplitOrderAndShipment</semantic:flowNodeRef>
+                <semantic:flowNodeRef>ParaJoinOderAndShipment</semantic:flowNodeRef>
+                <semantic:flowNodeRef>TerminateProcess</semantic:flowNodeRef>
+                <semantic:flowNodeRef>TaskApproveOrder</semantic:flowNodeRef>
+            </semantic:lane>
+        </semantic:laneSet>
         <semantic:startEvent name="" id="StartProcess">
             <semantic:outgoing>_6-468</semantic:outgoing>
         </semantic:startEvent>
@@ -59,7 +74,11 @@
         <semantic:sequenceFlow sourceRef="GatewayOrderApprovedDecision" targetRef="TerminateProcess" name="" id="_6-552"/>
     </semantic:process>
     <bpmndi:BPMNDiagram documentation="" id="Trisotech.Visio-_6" name="Order Process" resolution="96.00000267028808">
-        <bpmndi:BPMNPlane bpmnElement="_6">
+        <bpmndi:BPMNPlane bpmnElement="_6-1">
+            <bpmndi:BPMNShape bpmnElement="Buyer" isHorizontal="true" id="Trisotech.Visio__6_Buyer">
+                <dc:Bounds height="277.0" width="957.0" x="75.0" y="276.0"/>
+                <bpmndi:BPMNLabel/>
+            </bpmndi:BPMNShape>
             <bpmndi:BPMNShape bpmnElement="StartProcess" id="Trisotech.Visio__6_StartProcess">
                 <dc:Bounds height="30.0" width="30.0" x="120.0" y="393.0"/>
                 <bpmndi:BPMNLabel/>

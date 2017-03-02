@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="microFlow"/>
-	<classpathentry kind="lib" path="C:/Users/Tobi/Documents/Semester 06/Projekte/MicroFlowTransform/usedJars/camunda-bpmn-model-7.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tobi/Documents/Semester 06/Projekte/MicroFlowTransform/usedJars/camunda-xml-model-7.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Tobi/Documents/Semester 06/Projekte/MicroFlowTransform/usedJars/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="E:/6. Semester/Projekte/MicroFlowTransform/usedJars/camunda-bpmn-model-7.6.0.jar"/>
+	<classpathentry kind="lib" path="E:/6. Semester/Projekte/MicroFlowTransform/usedJars/camunda-xml-model-7.6.0.jar"/>
+	<classpathentry kind="lib" path="E:/6. Semester/Projekte/MicroFlowTransform/usedJars/junit-4.12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
