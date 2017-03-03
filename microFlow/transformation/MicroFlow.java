@@ -35,7 +35,7 @@ import org.camunda.bpm.model.xml.type.ModelElementType;
 public class MicroFlow {
 	static int nullcounter = 0;
 	public static void main(String[] args) {
-  		File file = new File("../MicroFlowTransform/microFlow/Data/Pool.bpmn");
+  		File file = new File("../MicroFlowTransform/microFlow/Data/Collapsed SubProcess.bpmn");
   		createCollectionFromBpmn(file);
 	}
 	
@@ -94,22 +94,28 @@ public class MicroFlow {
 		String [][] result = new String [100][2];
 		int count = 0;
 		for(int i = sequenceFlowArray.length - 1; i >= 0; i--){
-			if(sequenceFlowArray[i].getTarget().getElementType().getTypeName() != "callActivity"){
+			if(sequenceFlowArray[i].getTarget().getElementType().getTypeName() == "callActivity"){
+				String called = sequenceFlowArray[i].getTarget().getAttributeValue("calledElement");
+				Process process = modelInstance.getModelElementById(called);
+				Collection<SequenceFlow> callSubSequence = process.getChildElementsByType(SequenceFlow.class);
+				SequenceFlow [] callSubSequenceArray = callSubSequence.toArray(new SequenceFlow[0]);
+				for(int n = callSubSequence.size() - 1; n >= 0; n--){
+					temp[count][0] = callSubSequenceArray[n].getTarget().getName();
+					count++;
+				}
+			} else if(sequenceFlowArray[i].getTarget().getElementType().getTypeName() == "subProcess") {
+				Collection<SequenceFlow> subSequence = sequenceFlowArray[i].getTarget().getChildElementsByType(SequenceFlow.class);
+				SequenceFlow [] subSequenceArray = subSequence.toArray(new SequenceFlow[0]);
+				for(int j = subSequence.size() - 1; j >= 0; j--){
+					temp[count][0] = subSequenceArray[j].getTarget().getName();
+					count++;
+				}
+			} else {
 				temp[count][0] = sequenceFlowArray[i].getTarget().getName();
 				if(sequenceFlowArray[i].getSource().getElementType().getTypeName() == "parallelGateway" && sequenceFlowArray[i].getSource().getOutgoing().size() > 1){
 					temp[count][1] = "p";
 				}
 				count++;
-			} else {
-				String called = sequenceFlowArray[i].getTarget().getAttributeValue("calledElement");
-				Process process = modelInstance.getModelElementById(called);
-				Collection<SequenceFlow> subSequence = process.getChildElementsByType(SequenceFlow.class);
-				SequenceFlow [] subSequenceArray = subSequence.toArray(new SequenceFlow[0]);
-				for(int n = subSequence.size() - 1; n >= 0; n--){
-					temp[count][0] = subSequenceArray[n].getTarget().getName();
-					//System.out.println(result[count][0]);
-					count++;
-				}
 			}
 		}
 		for(int i = 0; i < count; i++){

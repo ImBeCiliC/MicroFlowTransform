@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
-<semantic:definitions id="_1275486223307" targetNamespace="http://www.trisotech.com/definitions/_1275486223307" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL">
-    <semantic:process isExecutable="false" id="_6">
+<semantic:definitions id="_1275486197916" targetNamespace="http://www.trisotech.com/definitions/_1275486197916" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL">
+    <semantic:process isExecutable="false" id="_6-1">
         <semantic:startEvent name="" id="StartProcess">
             <semantic:outgoing>_6-468</semantic:outgoing>
         </semantic:startEvent>
@@ -58,8 +58,15 @@
         <semantic:sequenceFlow sourceRef="TaskReviewOrder" targetRef="EndProcess" name="" id="_6-536"/>
         <semantic:sequenceFlow sourceRef="GatewayOrderApprovedDecision" targetRef="TerminateProcess" name="" id="_6-552"/>
     </semantic:process>
+    <semantic:collaboration id="C1275486198151">
+        <semantic:participant name="Buyer" processRef="_6-1" id="Buyer"/>
+    </semantic:collaboration>
     <bpmndi:BPMNDiagram documentation="" id="Trisotech.Visio-_6" name="Order Process" resolution="96.00000267028808">
-        <bpmndi:BPMNPlane bpmnElement="_6">
+        <bpmndi:BPMNPlane bpmnElement="C1275486198151">
+            <bpmndi:BPMNShape bpmnElement="Buyer" isHorizontal="true" id="Trisotech.Visio_Buyer">
+                <dc:Bounds height="252.0" width="924.0" x="84.0" y="276.0"/>
+                <bpmndi:BPMNLabel/>
+            </bpmndi:BPMNShape>
             <bpmndi:BPMNShape bpmnElement="StartProcess" id="Trisotech.Visio__6_StartProcess">
                 <dc:Bounds height="30.0" width="30.0" x="120.0" y="393.0"/>
                 <bpmndi:BPMNLabel/>
