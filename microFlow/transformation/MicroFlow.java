@@ -35,11 +35,11 @@ import org.camunda.bpm.model.xml.type.ModelElementType;
 public class MicroFlow {
 	static int nullcounter = 0;
 	public static void main(String[] args) {
-  		File file = new File("../MicroFlowTransform/microFlow/Data/Collapsed SubProcess.bpmn");
-  		createCollectionFromBpmn(file);
+  		File file = new File("../MicroFlowTransform/microFlow/Data/"+args[0]);
+  		createCollectionFromBpmn(file, args);
 	}
 	
-	public static Collection<SequenceFlow> createCollectionFromBpmn(File file){
+	public static Collection<SequenceFlow> createCollectionFromBpmn(File file, String [] args){
 		String[] filen = file.getName().split("\\.");
 		String filename = filen[0] + ".json";
 		String jsonString = null;
@@ -56,8 +56,8 @@ public class MicroFlow {
 		String [][] result = createStringArray(sequenceFlowArray, modelInstance);
 		
 		jsonString = createStartString(sequenceFlowArray, endEvent);
-		jsonString += createConstraints(result);
-		System.out.println(jsonString);
+		jsonString += createConstraints(result, args);
+		//System.out.println(jsonString);
 		
 		writeToFile(jsonString, filename);
 		return sequenceFlowInstance;
@@ -114,6 +114,9 @@ public class MicroFlow {
 				temp[count][0] = sequenceFlowArray[i].getTarget().getName();
 				if(sequenceFlowArray[i].getSource().getElementType().getTypeName() == "parallelGateway" && sequenceFlowArray[i].getSource().getOutgoing().size() > 1){
 					temp[count][1] = "p";
+				} else if(sequenceFlowArray[i].getTarget().getElementType().getTypeName() == "exclusiveGateway") {
+					temp[++count][1] = "e";
+					count--;
 				}
 				count++;
 			}
@@ -123,12 +126,14 @@ public class MicroFlow {
 				result[nullcounter][0] = temp[i][0];
 				result[nullcounter++][1] = temp[i][1];
 			}
+			System.out.println(temp[i][0] + "||" + temp[i][1]);
 		}
+		
 		return result;
 		
 	}
 	
-	public static String createConstraints(String [][] stringArray){
+	public static String createConstraints(String [][] stringArray, String [] args){
 		String constraints = "";
 		
 		for(int i = 0; i < nullcounter - 1; i++){
@@ -144,7 +149,10 @@ public class MicroFlow {
 				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
 						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
 						"\t  \"constraint\":\"" + stringArray[i - 1][0] + "\"}," + System.lineSeparator();
-				
+			} else if(stringArray[i][1] == "e"){
+				constraints += "\t{ \"type\":\"BranchAfterExecution\"," + System.lineSeparator() +
+						"\t  \"target\":\"" + stringArray[i][0] + "\"}," + System.lineSeparator() +
+						"\t  \"constraint\":\"" + args[1] + "\"}," + System.lineSeparator();
 			} else {
 				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
 						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +

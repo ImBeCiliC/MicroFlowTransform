@@ -11,9 +11,6 @@
 	{ "type":"BeforeNode",
 	  "target":"Approve Order"},
 	  "constraint":"Order  Handling"},
-	{ "type":"BeforeNode",
+	{ "type":"BranchAfterExecution",
 	  "target":"Approve Order"},
-	  "constraint":"Shipping Handling"},
-	{ "type":"BeforeNode",
-	  "target":"Quotation Handling"},
-	  "constraint":"Approve Order"}]};
+	  "constraint":"PathToGroovey"}]};
