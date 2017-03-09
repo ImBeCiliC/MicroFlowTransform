@@ -57,7 +57,7 @@ public class MicroFlow {
 		
 		jsonString = createStartString(sequenceFlowArray, endEvent);
 		jsonString += createConstraints(result, args);
-		//System.out.println(jsonString);
+		System.out.println(jsonString);
 		
 		writeToFile(jsonString, filename);
 		return sequenceFlowInstance;
@@ -94,6 +94,7 @@ public class MicroFlow {
 		String [][] result = new String [100][2];
 		int count = 0;
 		for(int i = sequenceFlowArray.length - 1; i >= 0; i--){
+			/*
 			if(sequenceFlowArray[i].getTarget().getElementType().getTypeName() == "callActivity"){
 				String called = sequenceFlowArray[i].getTarget().getAttributeValue("calledElement");
 				Process process = modelInstance.getModelElementById(called);
@@ -119,16 +120,60 @@ public class MicroFlow {
 					count--;
 				}
 				count++;
+			} */
+			
+			switch(sequenceFlowArray[i].getTarget().getElementType().getTypeName()){
+				
+				case "endEvent": 		break;
+				case "startEvent": 		break;
+			
+				case "callActivity": 	String called = sequenceFlowArray[i].getTarget().getAttributeValue("calledElement");
+										Process process = modelInstance.getModelElementById(called);
+										Collection<SequenceFlow> callSubSequence = process.getChildElementsByType(SequenceFlow.class);
+										SequenceFlow [] callSubSequenceArray = callSubSequence.toArray(new SequenceFlow[0]);
+										for(int n = callSubSequence.size() - 1; n >= 0; n--){
+											temp[count][0] = callSubSequenceArray[n].getTarget().getName();
+											count++;
+										}
+										break;
+										
+				case "subProcess":		Collection<SequenceFlow> subSequence = sequenceFlowArray[i].getTarget().getChildElementsByType(SequenceFlow.class);
+										SequenceFlow [] subSequenceArray = subSequence.toArray(new SequenceFlow[0]);
+										for(int j = subSequence.size() - 1; j >= 0; j--){
+											if(subSequenceArray[j].getTarget().getElementType().getTypeName() != "endEvent"){
+												temp[count][0] = subSequenceArray[j].getTarget().getName();
+												count++;
+											}
+										}
+										break;
+										
+				case "parallelGateway":	temp[count][1] = "p";
+										count++;
+										break;
+										
+				case "exclusiveGateway": temp[count][1]	= "e";
+										 count++;
+										 break;
+										 
+				default:				temp[count][0] = sequenceFlowArray[i].getTarget().getName();
+										count++;
+										break;
 			}
 		}
 		for(int i = 0; i < count; i++){
+			
 			if(temp[i][0] != null){
+				//System.out.println(temp[i][0] + "||" + temp[i][1]);
 				result[nullcounter][0] = temp[i][0];
-				result[nullcounter++][1] = temp[i][1];
+				nullcounter++;
+			} else if(temp[i][1] == "p" && temp[i + 1][1] == "p"){
+				result[nullcounter][1] = "p";
+				result[nullcounter + 1][1] = "p";
+			} else if(temp[i][1] == "e"){
+				result[nullcounter][1] = "e";
 			}
-			System.out.println(temp[i][0] + "||" + temp[i][1]);
+			//System.out.println(temp[i][0] + "||" + temp[i][1]);
 		}
-		
 		return result;
 		
 	}
@@ -145,14 +190,21 @@ public class MicroFlow {
 							"\t  \"constraint\":\"" + stringArray[i - j][0] + "\"}," + System.lineSeparator();
 				}
 				
-			} else if(stringArray[i][1] == "p" && stringArray[i - 1][1] == null) {
+			} else if(stringArray[i][1] == "p" && stringArray[i + 1][1] != "e") {
 				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
 						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
 						"\t  \"constraint\":\"" + stringArray[i - 1][0] + "\"}," + System.lineSeparator();
+				
 			} else if(stringArray[i][1] == "e"){
 				constraints += "\t{ \"type\":\"BranchAfterExecution\"," + System.lineSeparator() +
 						"\t  \"target\":\"" + stringArray[i][0] + "\"}," + System.lineSeparator() +
 						"\t  \"constraint\":\"" + args[1] + "\"}," + System.lineSeparator();
+				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
+						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
+						"\t  \"constraint\":\"" + stringArray[i][0] + "\"},"+ System.lineSeparator();
+				
+			} else if(stringArray[i + 1][1] == "e"){
+				// Skip BranchAfterExecution decides if the node is selected
 			} else {
 				constraints += "\t{ \"type\":\"BeforeNode\"," + System.lineSeparator() +
 						"\t  \"target\":\"" + stringArray[i + 1][0] + "\"}," + System.lineSeparator() +
@@ -160,7 +212,7 @@ public class MicroFlow {
 			}
 		}
 		// Delete the last comma in the String
-		constraints = constraints.substring(0, constraints.length() - 3);
+		constraints = constraints.substring(0, constraints.length());
 		constraints += "]};";
 		return constraints;
 		

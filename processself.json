@@ -1,0 +1,10 @@
+{ "startServiceType":"Start Process",
+"endServiceType":"End Process",
+"constraints":[
+	{ "type":"BranchAfterExecution",
+	  "target":"User Task B"},
+	  "constraint":"PathToGroovey"},
+	{ "type":"BeforeNode",
+	  "target":"User Task A"},
+	  "constraint":"User Task B"},
+]};
