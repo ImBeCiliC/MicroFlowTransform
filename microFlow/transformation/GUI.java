@@ -90,10 +90,14 @@ public class GUI {
 				OpenFile of = new OpenFile();
 				
 				try{
-					if(rdbtnBpmnToJson.isSelected())
+					if(rdbtnBpmnToJson.isSelected()){
+						of.fileChooser.setDialogTitle("Choose BPMN File");
 						BPMNToMicroFlow.createCollectionFromBpmn(of.Picked());
-					if(rdbtnWorkflowToBpmn.isSelected())
+					}
+					if(rdbtnWorkflowToBpmn.isSelected()){
+						of.fileChooser.setDialogTitle("Choose Workflow Log File");
 						MicroFlowToBPMN.controller(of.Picked());
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
