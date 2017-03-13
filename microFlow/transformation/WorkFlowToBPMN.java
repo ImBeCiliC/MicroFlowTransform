@@ -6,16 +6,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-public class MicroFlowToBPMN {
+public class WorkFlowToBPMN {
 	// Starts every task in the correct order
-	public static void controller(File file) throws FileNotFoundException{
+	public static void controller(File file) throws Exception{
 		String bpmnString = "";
 		String filename ="MicroFlowToBPMN.bpmn";
 		bpmnString += createStartString();
 		String[] rebuildedString = rebuildString(file);
 		bpmnString += createBPMN(rebuildedString);
 		System.out.println(bpmnString);
-		WriteToFile.writeToFile(bpmnString, filename);
+		WriteToFile.writeToFile(bpmnString, filename, 0);
 	}
 	
 	// Reads the String from the File and minimize a group of same string to one string

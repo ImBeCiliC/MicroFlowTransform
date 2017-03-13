@@ -13,10 +13,10 @@ import org.camunda.bpm.model.bpmn.instance.Process;
 import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 import org.camunda.bpm.model.xml.type.ModelElementType;
 
-public class BPMNToMicroFlow {
+public class BPMNToWorkFlow {
 	static int nullcounter = 0;
 	
-	public static void createCollectionFromBpmn(File file){
+	public static void createCollectionFromBpmn(File file) throws Exception{
 		String[] filen = file.getName().split("\\.");
 		String filename = filen[0] + ".json";
 		String jsonString = null;
@@ -36,7 +36,7 @@ public class BPMNToMicroFlow {
 		jsonString += createConstraints(result);
 		System.out.println(jsonString);
 		
-		WriteToFile.writeToFile(jsonString, filename);
+		WriteToFile.writeToFile(jsonString, filename, 1);
 	}
 	
 	//Creates the StartString for the JSON-File
@@ -128,6 +128,7 @@ public class BPMNToMicroFlow {
 		String constraints = "";
 		OpenFile of = new OpenFile();
 		of.fileChooser.setDialogTitle("Open GrooveyScript");
+		of.validation = of.fileChooser.showOpenDialog(null);
 		
 		for(int i = 0; i < nullcounter - 1; i++){
 			if(stringArray[i][1] == "p" && stringArray[i + 1][1] == null){

@@ -88,15 +88,15 @@ public class GUI {
 		btnChooseFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){
 				OpenFile of = new OpenFile();
-				
+				of.validation = of.fileChooser.showOpenDialog(null);
 				try{
 					if(rdbtnBpmnToJson.isSelected()){
 						of.fileChooser.setDialogTitle("Choose BPMN File");
-						BPMNToMicroFlow.createCollectionFromBpmn(of.Picked());
+						BPMNToWorkFlow.createCollectionFromBpmn(of.Picked());
 					}
 					if(rdbtnWorkflowToBpmn.isSelected()){
 						of.fileChooser.setDialogTitle("Choose Workflow Log File");
-						MicroFlowToBPMN.controller(of.Picked());
+						WorkFlowToBPMN.controller(of.Picked());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
