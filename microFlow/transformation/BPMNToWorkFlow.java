@@ -16,6 +16,8 @@ import org.camunda.bpm.model.xml.type.ModelElementType;
 public class BPMNToWorkFlow {
 	static int nullcounter = 0;
 	
+	// creates the Collection and sends it to the other Methodes 
+	// also starts the other Methodes in the correct order
 	public static void createCollectionFromBpmn(File file) throws Exception{
 		String[] filen = file.getName().split("\\.");
 		String filename = filen[0] + ".json";
@@ -39,10 +41,10 @@ public class BPMNToWorkFlow {
 		WriteToFile.writeToFile(jsonString, filename, 1);
 	}
 	
-	//Creates the StartString for the JSON-File
-	//
-	// Wenn mehrere EndEvents eintreffen k�nnen alle vorknoten als endServiceType reinschreiben
-	// realisierung durch das durchgehen aller vorknoten des EndEvent-Arrays und String Verkettung
+	// Creates the StartString for the JSON-File
+	// Check if the StartEvent has Name or Id write non-empty into Constraints
+	// Check every EndEvent and not empty then write it into the Constraint
+	// return the filled startString
 	public static String createStartString(SequenceFlow [] sequenceFlowArray, EndEvent [] endEvent){
 		String startString = null;
 		
@@ -65,6 +67,8 @@ public class BPMNToWorkFlow {
 		return startString;
 	}
 
+	// Creates a String Array with every Node and marks it if its involved into a parallelGateway or ExclusiveGateway
+	// returns the String Array with all the Nodes
 	public static String[][] createStringArray(SequenceFlow[] sequenceFlowArray, BpmnModelInstance modelInstance){
 		String [][] temp = new String [100][2];
 		String [][] result = new String [100][2];
@@ -85,7 +89,8 @@ public class BPMNToWorkFlow {
 										}
 										break;
 										
-				case "subProcess":		Collection<SequenceFlow> subSequence = sequenceFlowArray[i].getTarget().getChildElementsByType(SequenceFlow.class);
+				case "subProcess":		Collection<SequenceFlow> subSequence = 
+											sequenceFlowArray[i].getTarget().getChildElementsByType(SequenceFlow.class);
 										SequenceFlow [] subSequenceArray = subSequence.toArray(new SequenceFlow[0]);
 										for(int j = subSequence.size() - 1; j >= 0; j--){
 											if(subSequenceArray[j].getTarget().getElementType().getTypeName() != "endEvent"){
@@ -124,6 +129,10 @@ public class BPMNToWorkFlow {
 		
 	}
 	
+	// Checks if nodes are involved into parallel or exclusive gateway
+	// if they are involved constraints are created a diffrent way
+	// if not the String Array is converted into BeforeNode Constraints
+	// return constraints
 	public static String createConstraints(String [][] stringArray){
 		String constraints = "";
 		OpenFile of = new OpenFile();

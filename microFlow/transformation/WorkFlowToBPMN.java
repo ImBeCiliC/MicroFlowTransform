@@ -68,9 +68,14 @@ public class WorkFlowToBPMN {
 		// Generating Task from String Array
 		for(int i = 0; i < rebuildedString.length; i++){
 			if(rebuildedString[i] != null){
-				result += "\t<bpmn:task completionQuantity=\"1\" isForCompensation=\"false\" startQuantity=\"1\" name=\""+ rebuildedString[i] +"\" id=\""+ idTask + idCounterTask++ +"\">" + System.lineSeparator()
-							+ "\t\t<bpmn:incoming>"+ idSequenceFlow + (idCounterSequence++) + "</bpmn:incoming>" + System.lineSeparator()
-							+ "\t\t<bpmn:outgoing>"+ idSequenceFlow + idCounterSequence +"</bpmn:outgoing>" + System.lineSeparator()
+				result += "\t<bpmn:task completionQuantity=\"1\" "
+							+ "isForCompensation=\"false\" startQuantity=\"1\" "
+							+ "name=\""+ rebuildedString[i] +"\" id=\""+ idTask + idCounterTask++ +"\">" 
+							+ System.lineSeparator()
+							+ "\t\t<bpmn:incoming>"+ idSequenceFlow + (idCounterSequence++) 
+							+ "</bpmn:incoming>" + System.lineSeparator()
+							+ "\t\t<bpmn:outgoing>"+ idSequenceFlow + idCounterSequence 
+							+"</bpmn:outgoing>" + System.lineSeparator()
 							+ "\t</bpmn:task>" + System.lineSeparator();
 			}
 		}
@@ -83,43 +88,63 @@ public class WorkFlowToBPMN {
 		// Generating SequenceFlow from counted Tasks
 		int idCounterSequenceFlow = 0;
 		int idCounterT = 0;
-		result += "\t<bpmn:sequenceFlow sourceRef=\"StartProcess\" targetRef=\""+ idTask  + idCounterT + "\" name=\"\" id=\"" + idSequenceFlow + idCounterSequenceFlow++ +"\"/>" + System.lineSeparator();
+		result += "\t<bpmn:sequenceFlow sourceRef=\"StartProcess\" "
+				+ "targetRef=\""+ idTask  + idCounterT + "\" name=\"\" "
+				+ "id=\"" + idSequenceFlow + idCounterSequenceFlow++ +"\"/>" 
+				+ System.lineSeparator();
+		
 		for(int i = 0; i < idCounterSequence - 1; i++){
-			result += "\t<bpmn:sequenceFlow sourceRef=\"" + idTask  + idCounterT++ + "\" targetRef=\""+ idTask  + idCounterT + "\" name=\"\" id=\"" + idSequenceFlow + idCounterSequenceFlow++ +"\"/>" + System.lineSeparator();
+			result += "\t<bpmn:sequenceFlow sourceRef=\"" + idTask  + idCounterT++ + "\" "
+						+ "targetRef=\""+ idTask  + idCounterT + "\" name=\"\" "
+						+ "id=\"" + idSequenceFlow + idCounterSequenceFlow++ +"\"/>" 
+						+ System.lineSeparator();
 		}
 		result += "\t<bpmn:sequenceFlow sourceRef=\"" + idTask  + idCounterT++
-					+"\" targetRef=\"EndProcess\" name=\"\" id=\"" + idSequenceFlow + idCounterSequenceFlow++ +"\"/>" + System.lineSeparator()
+					+"\" targetRef=\"EndProcess\" name=\"\" "
+					+ "id=\"" + idSequenceFlow + idCounterSequenceFlow++ +"\"/>" 
+					+ System.lineSeparator()
 					+"</bpmn:process>" + System.lineSeparator();
 		
 		// Generating Diagram of the Workflow
 		// Declaration of Coordinates
 		int x = 200, y = 200;
 		result += "<bpmndi:BPMNDiagram id=\"BPMNDiagram_1\">" + System.lineSeparator()
-					+ "\t<bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"" + idTask +"\">" + System.lineSeparator();
+					+ "\t<bpmndi:BPMNPlane id=\"BPMNPlane_1\" "
+					+ "bpmnElement=\"" + idTask +"\">" + System.lineSeparator();
 		
 		// Generating StartEvent
-		result += "\t\t<bpmndi:BPMNShape id=\"StartEvent_StartProcess\" bpmnElement=\"StartProcess\">" + System.lineSeparator()
-					+ "\t\t\t<dc:Bounds x=\""+ (x + 50) +"\" y=\"" + (y+22) + "\" width=\"36\" height=\"36\"/>" + System.lineSeparator()
+		result += "\t\t<bpmndi:BPMNShape id=\"StartEvent_StartProcess\" "
+					+ "bpmnElement=\"StartProcess\">" + System.lineSeparator()
+					+ "\t\t\t<dc:Bounds x=\""+ (x + 50) +"\" y=\"" + (y+22) + "\" "
+					+ "width=\"36\" height=\"36\"/>" + System.lineSeparator()
 					+ "\t\t</bpmndi:BPMNShape>" + System.lineSeparator();
 		// Generating Tasks
 		for(int i=0; i < idCounterTask; i++){
-			result += "\t\t<bpmndi:BPMNShape id=\"Task_"+ idTask + i +"\" bpmnElement=\"" + idTask + i + "\">" + System.lineSeparator()
-						+ "\t\t\t<dc:Bounds x=\""+ x * (i + 2) +"\" y=\"" + y + "\" width=\"100\" height=\"80\"/>" + System.lineSeparator()
+			result += "\t\t<bpmndi:BPMNShape id=\"Task_"+ idTask + i +"\" "
+						+ "bpmnElement=\"" + idTask + i + "\">" + System.lineSeparator()
+						+ "\t\t\t<dc:Bounds x=\""+ x * (i + 2) +"\" y=\"" + y + "\" "
+						+ "width=\"100\" height=\"80\"/>" + System.lineSeparator()
 						+ "\t\t</bpmndi:BPMNShape>" + System.lineSeparator();
 		}
 		// Generating EndEvent
 		result += "\t\t<bpmndi:BPMNShape id=\"EndEvent_EndProcess\" bpmnElement=\"EndProcess\">" + System.lineSeparator()
-					+ "\t\t\t<dc:Bounds x=\""+ x * (idCounterTask + 2) +"\" y=\"" + (y+22) + "\" width=\"36\" height=\"36\"/>" + System.lineSeparator()
+					+ "\t\t\t<dc:Bounds x=\""+ x * (idCounterTask + 2) +"\" y=\"" + (y+22) + "\" "
+					+ "width=\"36\" height=\"36\"/>" + System.lineSeparator()
 					+ "\t\t</bpmndi:BPMNShape>" + System.lineSeparator();
 		// Generating Edge
 		for(int i = 0; i < idCounterSequenceFlow; i++){
-			result += "\t\t<bpmndi:BPMNEdge id=\"SequenceFlow"+ idSequenceFlow + i +"\" bpmnElement=\"" + idSequenceFlow + i + "\">" + System.lineSeparator();
+			result += "\t\t<bpmndi:BPMNEdge id=\"SequenceFlow"+ idSequenceFlow + i +"\" "
+						+ "bpmnElement=\"" + idSequenceFlow + i + "\">" + System.lineSeparator();
 			if(i == 0){
-				result += "\t\t\t<di:waypoint xsi:type=\"dc:Point\" x=\"" + (x+36+50) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator()
-							+ "\t\t\t<di:waypoint xsi:type=\"dc:Point\" x=\"" + x * (i + 2) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator();
+				result += "\t\t\t<di:waypoint xsi:type=\"dc:Point\" "
+							+ "x=\"" + (x+36+50) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator()
+							+ "\t\t\t<di:waypoint xsi:type=\"dc:Point\" "
+							+ "x=\"" + x * (i + 2) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator();
 			} else {
-				result += "\t\t\t<di:waypoint xsi:type=\"dc:Point\" x=\"" + ((x * (i + 1)) + 100) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator()
-							+ "\t\t\t<di:waypoint xsi:type=\"dc:Point\" x=\"" + x * (i + 2) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator();
+				result += "\t\t\t<di:waypoint xsi:type=\"dc:Point\" "
+							+ "x=\"" + ((x * (i + 1)) + 100) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator()
+							+ "\t\t\t<di:waypoint xsi:type=\"dc:Point\" "
+							+ "x=\"" + x * (i + 2) + "\" y=\"" + (y+40) + "\"/>" + System.lineSeparator();
 			}
 			result +=  "\t\t</bpmndi:BPMNEdge>" + System.lineSeparator();
 		}
